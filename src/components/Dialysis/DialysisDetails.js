@@ -38,7 +38,6 @@ const DialysisDetails = () => {
   const getDialsisDetail = async (fromDate, ToDate) => {
     const formattedFromDate = formatDate(fromDate);
     const formattedToDate = formatDate(ToDate);
-    debugger;
     try {
       const result = await axios.get(
         `dialysisScheduler?dateFrom=${formattedFromDate}&dateTo=${formattedToDate}`
