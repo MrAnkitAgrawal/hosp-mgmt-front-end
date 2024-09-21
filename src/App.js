@@ -8,7 +8,11 @@ import Patient from "./components/Patient/Patient";
 import DialysisSchedule from "./components/Dialysis/DialysisSchedule";
 import AddPatient from "./components/Patient/AddPatient";
 import EditPatient from "./components/Patient/EditPatient";
+import BookDialysis from "./components/Dialysis/BookDialysis";
+import DialysisDetails from "./components/Dialysis/DialysisDetails";
+import CheckDialysisBilling from "./components/Dialysis/CheckDialysisBilling";
 import { ToastContainer, toast } from "react-toastify";
+import "rsuite/dist/rsuite.min.css";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
@@ -19,6 +23,12 @@ function App() {
           <Route path={"/dialysis"} element={<DialysisSchedule />} />
           <Route path={"/add-patient"} element={<AddPatient />} />
           <Route path={"/edit-patient"} element={<EditPatient />} />
+          <Route path={"/book-dialysis"} element={<BookDialysis />} />
+          <Route path={"/dialysis-details"} element={<DialysisDetails />} />
+          <Route
+            path={"/dialysis-billing"}
+            element={<CheckDialysisBilling />}
+          />
         </Routes>
         {/* <Login /> */}
         <Sidebar />

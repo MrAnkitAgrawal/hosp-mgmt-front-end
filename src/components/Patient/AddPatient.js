@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import Navbar from "../Layouts/Navbar";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { getYear, getMonth } from "date-fns";
+import range from "lodash/range";
+import { DatePicker } from "rsuite";
 function AddPatient() {
   const insuranceOptions = [
     { insuranceCompany: "AYUSHMAN_BHARAT_YOJNA", policyNumber: "2345992" },
@@ -32,7 +34,9 @@ function AddPatient() {
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-
+  const handleDateofBirth = (e) => {
+    setValue("dateOfBirth", formatDate(e));
+  };
   const handleInsuranceChange = (event) => {
     const selectedPolicyNumber = event.target.value;
     const selectedInsurance = insuranceOptions.find(
@@ -44,7 +48,6 @@ function AddPatient() {
     try {
       const formattedData = {
         ...data,
-        dateOfBirth: formatDate(data.dateOfBirth),
         mobileNumber: "+91" + data.mobileNumber,
       };
       console.log(formattedData);
@@ -108,10 +111,8 @@ function AddPatient() {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
-                        onChange={(date) => field.onChange(date)}
-                        selected={field.value}
-                        dateFormat="MMMM d, yyyy"
-                        className="form-control"
+                        format="dd-MM-yyyy"
+                        onChange={handleDateofBirth}
                       />
                     )}
                   />
@@ -125,9 +126,9 @@ function AddPatient() {
                     {...register("gender")}
                   >
                     <option value="">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                    <option value="OTHER">Other</option>
                   </Form.Select>
                 </Form.Group>
               </div>
