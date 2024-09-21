@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import Navbar from "../Layouts/Navbar";
-
+import { GrView } from "react-icons/gr";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Modal, ButtonToolbar, Button, Placeholder } from "rsuite";
 import { DatePicker } from "rsuite";
 const DialysisDetails = () => {
+  const [open, setOpen] = React.useState(false);
+  const [size, setSize] = React.useState();
+  const handleOpen = (value) => {
+    setSize(value);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
   const [dialysisDetails, setdialysisDetails] = useState([]);
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
@@ -217,6 +225,7 @@ const DialysisDetails = () => {
                         <th>Dialysis StationLabel</th>
                         <th>Dialysis Slot</th>
                         <th>Schedule Status</th>
+                        {/* <th>Actions</th> */}
                       </tr>
                     </thead>
 
@@ -232,6 +241,16 @@ const DialysisDetails = () => {
                               <td>{item.dialysisStation}</td>
                               <td>{item.dialysisSlot}</td>
                               <td>{item.scheduleStatus}</td>
+                              {/* <td>
+                                <div className="form-button-action">
+                                  <Button
+                                    size="md"
+                                    onClick={() => handleOpen("md")}
+                                  >
+                                    <GrView />
+                                  </Button>
+                                </div>
+                              </td> */}
                             </tr>
                           );
                         })
@@ -248,6 +267,22 @@ const DialysisDetails = () => {
           </div>
         </div>
       </div>
+      <Modal size={size} open={open} onClose={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Modal Title</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Placeholder.Paragraph rows={size === "full" ? 100 : 10} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleClose} appearance="subtle">
+            Cancel
+          </Button>
+          <Button onClick={handleClose} appearance="primary">
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { getYear, getMonth } from "date-fns";
 import range from "lodash/range";
 import { DatePicker } from "rsuite";
+
 function AddPatient() {
   const insuranceOptions = [
     { insuranceCompany: "AYUSHMAN_BHARAT_YOJNA", policyNumber: "2345992" },
@@ -113,6 +114,11 @@ function AddPatient() {
                       <DatePicker
                         format="dd-MM-yyyy"
                         onChange={handleDateofBirth}
+                        shouldDisableDate={(date) => {
+                          const todayDate = new Date();
+
+                          return todayDate < date;
+                        }}
                       />
                     )}
                   />

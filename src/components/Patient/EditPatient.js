@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Navbar from "../Layouts/Navbar";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { DatePicker } from "rsuite";
 const EditPatient = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,19 +39,15 @@ const EditPatient = () => {
       lastName: "",
     },
   });
-  const parseDate = (dateString) => {
-    const [day, month, year] = dateString.split("-").map(Number);
-    return new Date(year, month - 1, day); // JavaScript months are 0-indexed
-  };
+
   useEffect(() => {
+    debugger;
     if (patientData) {
       reset({
         firstName: patientData.firstName || "",
         middleName: patientData.middleName || "",
         lastName: patientData.lastName || "",
-        dateOfBirth: patientData.dateOfBirth
-          ? parseDate(patientData.dateOfBirth)
-          : new Date(),
+        dateOfBirth: parseDate(patientData.dateOfBirth) || new Date(),
         gender: patientData.gender || "",
         aadharNumber: patientData.aadharNumber || "",
         whatsAppNumber: patientData.whatsAppNumber || "",
@@ -62,14 +58,33 @@ const EditPatient = () => {
     }
   }, [patientData, reset]);
 
+  const parseDate = (dateString) => {
+    // Check if the input is already a Date object
+    if (dateString instanceof Date) {
+      return dateString;
+    }
+
+    // If dateString is not a valid string, return null
+    if (!dateString || typeof dateString !== "string") {
+      return null;
+    }
+
+    // Parse the string "dd-MM-yyyy" to a Date object
+    const [day, month, year] = dateString.split("-").map(Number);
+
+    // Return a Date object
+    return new Date(year, month - 1, day);
+  };
   const formatDate = (date) => {
-    if (!date) return "";
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-
+  const handleDateofBirth = (e) => {
+    const formattedDate = formatDate(e); // Format date to dd-MM-yyyy
+    setValue("dateOfBirth", formattedDate); // Use react-hook-form's setValue to update the form state
+  };
   const handleInsuranceChange = (event) => {
     const selectedPolicyNumber = event.target.value;
     const selectedInsurance = insuranceOptions.find(
@@ -82,7 +97,7 @@ const EditPatient = () => {
     try {
       const formattedData = {
         ...data,
-        dateOfBirth: formatDate(data.dateOfBirth),
+        // dateOfBirth: formatDate(data.dateOfBirth),
         mobileNumber: data.mobileNumber,
         patientId: patientData.patientId,
       };
@@ -153,11 +168,25 @@ const EditPatient = () => {
                     control={control}
                     render={({ field }) => (
                       <DatePicker
-                        onChange={(date) => field.onChange(date)}
-                        selected={field.value}
-                        dateFormat="MMMM d, yyyy"
-                        className="form-control"
+                        format="dd-MM-yyyy"
+                        value={
+                          watch("dateOfBirth")
+                            ? parseDate(watch("dateOfBirth"))
+                            : null
+                        }
+                        onChange={handleDateofBirth}
+                        shouldDisableDate={(date) => {
+                          const todayDate = new Date();
+
+                          return todayDate < date;
+                        }}
                       />
+                      // <DatePicker
+                      //   onChange={(date) => field.onChange(date)}
+                      //   selected={field.value}
+                      //   dateFormat="MMMM d, yyyy"
+                      //   className="form-control"
+                      // />
                     )}
                   />
                 </Form.Group>

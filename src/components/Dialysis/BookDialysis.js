@@ -110,6 +110,11 @@ const BookDialysis = () => {
                   <DatePicker
                     format="dd-MM-yyyy"
                     onChange={handleDialysisDate}
+                    shouldDisableDate={(date) => {
+                      const todayDate = new Date();
+
+                      return todayDate > date;
+                    }}
                   />
                 </Form.Group>
               </div>
