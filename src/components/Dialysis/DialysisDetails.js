@@ -4,27 +4,64 @@ import Navbar from "../Layouts/Navbar";
 import { GrView } from "react-icons/gr";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { IoAddCircleOutline } from "react-icons/io5";
 import { Modal, ButtonToolbar, Button, Placeholder } from "rsuite";
 import { DatePicker } from "rsuite";
+import { useForm, Controller } from "react-hook-form";
+import { MdIncompleteCircle } from "react-icons/md";
+import { Toggle } from "rsuite";
 const DialysisDetails = () => {
-  const [open, setOpen] = React.useState(false);
-  const [size, setSize] = React.useState();
-  const handleOpen = (value) => {
+  const [BillingCheck, setBillingCheck] = useState(false);
+  const [amount, setAmount] = useState("");
+  const [itemQuantity, SetitemQuantity] = useState("");
+  const [open, setOpen] = useState(false);
+  const [size, setSize] = useState();
+  const [type, setType] = useState("");
+  const [dialysisDetails, setdialysisDetails] = useState([]);
+  const [fromDate, setFromDate] = useState(new Date());
+  const [toDate, setToDate] = useState(new Date());
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    reset,
+    watch,
+    getValues,
+    formState: { errors },
+  } = useForm({});
+  const handleOpen = (value, modalType) => {
+    setType(modalType);
     setSize(value);
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
-  const [dialysisDetails, setdialysisDetails] = useState([]);
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
-
+  const handleBillingCheck = (e) => {
+    setValue("declareThatBillCheckedAndVerifiedWithCustomer", e);
+    setBillingCheck(e);
+  };
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-
+  const handleAmountChange = (e) => {
+    const value = e.target.value;
+    const formattedValue = value.replace(/[^0-9.]/g, "");
+    const decimalCount = (formattedValue.match(/\./g) || []).length;
+    const validAmount = formattedValue.match(/^\d{0,5}(\.\d{0,2})?$/);
+    if (validAmount && decimalCount <= 1) {
+      setValue("amount", formattedValue);
+      setAmount(formattedValue);
+    }
+  };
+  const handleItemQuantityChange = (e) => {
+    const value = e.target.value;
+    const formattedValue = value.replace(/[^0-9]/g, "");
+    setValue("itemQuantity", formattedValue);
+    SetitemQuantity(formattedValue);
+  };
   useEffect(() => {
     const today = new Date();
     setFromDate(today);
@@ -51,14 +88,87 @@ const DialysisDetails = () => {
       console.log(error);
     }
   };
+  const dialysisBilling = async () => {
+    try {
+      debugger;
+      const billingHead = getValues("billingHead");
+      const billingRemarks = getValues("billingRemarks");
+      const billItemType = getValues("billItemType");
+      const billItemName = getValues("billItemName");
+      const itemQuantity = getValues("itemQuantity");
+      const amount = getValues("amount");
+      const scheduleID = parseInt(localStorage.getItem("scheduleID"));
+      const billingData = {
+        billingHead: billingHead || "Dialysis",
+        billingRemarks: billingRemarks || "Dialysis Bill",
+        billItems: [
+          {
+            itemId: null,
+            billItemType: billItemType || "DIALYSIS",
+            billItemName: billItemName || "Type2",
+            itemQuantity: itemQuantity ? parseInt(itemQuantity, 10) : null,
+            amount: amount ? parseFloat(amount) : 0,
+          },
+        ],
+      };
+      console.log(billingData);
+      debugger;
+      const result = await axios.post(
+        `dialysisScheduler/${scheduleID}/billing`,
+        billingData
+      );
+      if (result.status === 204) {
+        toast.success("Bill Added Succesfully");
+        localStorage.clear();
+        handleClose();
+        reset({
+          billingHead: "",
+          billingRemarks: "",
+          billItemType: "",
+          billItemName: "",
+          itemQuantity: 0,
+          amount: 0,
+        });
+        SetitemQuantity("");
+        setAmount("");
+      }
+      console.log(result);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  const updateStatus = async () => {
+    const data = {
+      dialysisStatus: getValues("dialysisStatus"),
+      doctorName: getValues("doctorName"),
+      nursingStaffName: getValues("nursingStaffName"),
+      declareThatBillCheckedAndVerifiedWithCustomer: getValues(
+        "declareThatBillCheckedAndVerifiedWithCustomer"
+      ),
+      nextDialysisDetails: null,
+    };
+    console.log(data);
+  };
 
-  // const handleDialysisFromDate = (date) => {
-  //   setFromDate(date);
-  // };
+  const getDialysisBillingDetails = async (id) => {
+    try {
+      debugger;
+      const result = await axios.get(`dialysisScheduler/${id}/billing`);
+      if (result.status === 200 && result.data) {
+        const billingDetails = result.data;
+        setValue("billingHead", billingDetails.billingHead);
+        setValue("billItemName", billingDetails.billItems[0].billItemName);
+        setValue("billItemType", billingDetails.billItems[0].billItemType);
+        setValue("billingRemarks", billingDetails.billingRemarks);
+        SetitemQuantity(billingDetails.billItems[0].amount);
+        setAmount(billingDetails.billItems[0].itemQuantity);
+      }
 
-  // const handleDialysisToDate = (date) => {
-  //   setToDate(date);
-  // };
+      console.log(result);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   const handleSearch = () => {
     debugger;
     if (fromDate > toDate) {
@@ -225,7 +335,7 @@ const DialysisDetails = () => {
                         <th>Dialysis StationLabel</th>
                         <th>Dialysis Slot</th>
                         <th>Schedule Status</th>
-                        {/* <th>Actions</th> */}
+                        <th>Actions</th>
                       </tr>
                     </thead>
 
@@ -233,7 +343,7 @@ const DialysisDetails = () => {
                       {dialysisDetails.length > 0 ? (
                         dialysisDetails.map((item) => {
                           return (
-                            <tr key={item.patientId}>
+                            <tr key={item.scheduleID}>
                               <td>{item.scheduleID}</td>
                               <td>{item.patientName}</td>
                               <td>{item.patientMobileNumber}</td>
@@ -241,16 +351,46 @@ const DialysisDetails = () => {
                               <td>{item.dialysisStation}</td>
                               <td>{item.dialysisSlot}</td>
                               <td>{item.scheduleStatus}</td>
-                              {/* <td>
+
+                              <td>
                                 <div className="form-button-action">
                                   <Button
                                     size="md"
-                                    onClick={() => handleOpen("md")}
+                                    onClick={() => {
+                                      handleOpen("md", "view");
+                                      getDialysisBillingDetails(
+                                        item.scheduleID
+                                      );
+                                    }}
                                   >
                                     <GrView />
                                   </Button>
+                                  <Button
+                                    size="md"
+                                    onClick={() => {
+                                      handleOpen("md", "add");
+                                      localStorage.setItem(
+                                        "scheduleID",
+                                        item.scheduleID
+                                      );
+                                    }}
+                                  >
+                                    <IoAddCircleOutline />
+                                  </Button>
+                                  <Button
+                                    size="md"
+                                    onClick={() => {
+                                      handleOpen("md", "delete");
+                                      // localStorage.setItem(
+                                      //   "scheduleID",
+                                      //   item.scheduleID
+                                      // );
+                                    }}
+                                  >
+                                    <MdIncompleteCircle />
+                                  </Button>
                                 </div>
-                              </td> */}
+                              </td>
                             </tr>
                           );
                         })
@@ -267,22 +407,243 @@ const DialysisDetails = () => {
           </div>
         </div>
       </div>
-      <Modal size={size} open={open} onClose={handleClose}>
-        <Modal.Header>
-          <Modal.Title>Modal Title</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Placeholder.Paragraph rows={size === "full" ? 100 : 10} />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={handleClose} appearance="subtle">
-            Cancel
-          </Button>
-          <Button onClick={handleClose} appearance="primary">
-            Ok
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {type && (
+        <Modal size={size} open={open} onClose={handleClose}>
+          <Modal.Header>
+            <Modal.Title>
+              {type === "view" && "View Details"}
+              {type === "add" && "Add Dialysis Billings"}
+              {type === "delete" && "Complete Dialysis"}
+            </Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            {type === "view" && (
+              <div>
+                <div className="col">
+                  <div className="mb-3">
+                    <Form.Group controlId="formFirstName">
+                      <Form.Label>Billing Head</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Billing Head"
+                        {...register("billingHead")}
+                        readOnly
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formBillItemName">
+                      <Form.Label> Bill Item Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Bill Item Name"
+                        {...register("billItemName")}
+                        readOnly
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formItemQuantity">
+                      <Form.Label>Item Quantity</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={itemQuantity}
+                        maxLength="2"
+                        placeholder="Enter Item Quantity"
+                        readOnly
+                        // {...register("middleName")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formBillItemType">
+                      <Form.Select
+                        aria-label="Select Bill Item Type"
+                        {...register("billItemType")}
+                        disabled
+                      >
+                        <option value="">Select Bill Item Type</option>
+                        <option value="DIALYSIS">Dialysis</option>
+                        <option value="PATHOLOGY">Pathology</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formAmount">
+                      <Form.Label>Amount</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Amount"
+                        value={amount}
+                        readOnly
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formBillingRemarks">
+                      <Form.Label>Billing Remarks</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Billings Remarks"
+                        {...register("billingRemarks")}
+                        readOnly
+                      />
+                    </Form.Group>
+                  </div>
+                </div>
+              </div>
+            )}
+            {type === "add" && (
+              <div>
+                <div className="col">
+                  <div className="mb-3">
+                    <Form.Group controlId="formFirstName">
+                      <Form.Label>Billing Head</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Billing Head"
+                        {...register("billingHead")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formBillItemName">
+                      <Form.Label> Bill Item Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Bill Item Name"
+                        {...register("billItemName")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formItemQuantity">
+                      <Form.Label>Item Quantity</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={itemQuantity}
+                        maxLength="2"
+                        onChange={handleItemQuantityChange}
+                        placeholder="Enter Item Quantity"
+                        // {...register("middleName")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formBillItemType">
+                      <Form.Select
+                        aria-label="Select Bill Item Type"
+                        {...register("billItemType")}
+                      >
+                        <option value="">Select Bill Item Type</option>
+                        <option value="DIALYSIS">Dialysis</option>
+                        <option value="PATHOLOGY">Pathology</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formAmount">
+                      <Form.Label>Amount</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Amount"
+                        value={amount}
+                        onChange={handleAmountChange}
+                        pattern="^\d{1,5}(\.\d{1,2})?$"
+                        title="Enter up to 5 digits and 2 decimal places (e.g., 10000.00)"
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formBillingRemarks">
+                      <Form.Label>Billing Remarks</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Billings Remarks"
+                        {...register("billingRemarks")}
+                      />
+                    </Form.Group>
+                  </div>
+                </div>
+              </div>
+            )}
+            {type === "delete" && (
+              <div>
+                <div className="col">
+                  <div className="mb-3">
+                    <Form.Group controlId="formDoctorName">
+                      <Form.Label>Billing Head</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Doctor Name"
+                        {...register("doctorName")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formdialysisStatus">
+                      <Form.Label>Dialysis Status</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Dialysis Status"
+                        {...register("dialysisStatus")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formNursingStaffName">
+                      <Form.Label>Nursing Staff Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Nursing Staff Name"
+                        {...register("nursingStaffName")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formdeclareThatBillCheckedAndVerifiedWithCustomer">
+                      <Form.Label>Billing Check</Form.Label>
+                      <Toggle
+                        value={BillingCheck}
+                        onChange={handleBillingCheck}
+                      />
+                    </Form.Group>
+                  </div>
+                  {/* <div className="mb-3">
+                    <Form.Group controlId="formNextDialysisDetails">
+                      <Form.Label>Next Dialysis Details</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Next Dialysis Details"
+                        {...register("nextDialysisDetails")}
+                      />
+                    </Form.Group>
+                  </div> */}
+                </div>
+              </div>
+            )}
+          </Modal.Body>
+
+          <Modal.Footer>
+            {type === "delete" && (
+              <Button onClick={updateStatus} appearance="primary">
+                Update
+              </Button>
+            )}
+            {type === "add" && (
+              <Button onClick={dialysisBilling} appearance="primary">
+                ADD
+              </Button>
+            )}
+            {type === "view" && (
+              <Button onClick={handleClose} appearance="primary">
+                Close
+              </Button>
+            )}
+          </Modal.Footer>
+        </Modal>
+      )}
     </>
   );
 };

@@ -47,9 +47,15 @@ function AddPatient() {
   };
   const onSubmit = async (data) => {
     try {
+      const insuranceDetail = {
+        insuranceCompany: data.insuranceCompany,
+        policyNumber: data.policyNumber,
+      };
+      const insurance = [{ ...insuranceDetail }];
       const formattedData = {
         ...data,
         mobileNumber: "+91" + data.mobileNumber,
+        insuranceDetails: insurance,
       };
       console.log(formattedData);
       const result = await axios.post(`patient`, formattedData);
@@ -104,7 +110,7 @@ function AddPatient() {
             </div>
 
             <div className="row">
-              <div className="col-12 col-md-4 mb-3">
+              <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formDOB">
                   <Form.Label>Select Date</Form.Label>
                   <Controller
@@ -124,7 +130,7 @@ function AddPatient() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-4 mb-3">
+              <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formGender">
                   <Form.Label>Gender</Form.Label>
                   <Form.Select
@@ -138,13 +144,23 @@ function AddPatient() {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-4 mb-3">
+              <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formAadharNumber">
                   <Form.Label>Aadhar Number</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter Aadhar Number"
                     {...register("aadharNumber")}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-12 col-md-6 col-lg-3 mb-3">
+                <Form.Group controlId="formInsuranceCompany">
+                  <Form.Label>Insurance Company</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Insurance Details"
+                    {...register("insuranceCompany")}
                   />
                 </Form.Group>
               </div>
@@ -181,7 +197,19 @@ function AddPatient() {
                   />
                 </Form.Group>
               </div>
+
               <div className="col-12 col-md-6 col-lg-3 mb-3">
+                <Form.Group controlId="formInsuranceDetails">
+                  <Form.Label>Policy Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Policy Number"
+                    {...register("policyNumber")}
+                  />
+                </Form.Group>
+              </div>
+
+              {/* <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formInsuranceDetails">
                   <Form.Label>Insurance Details</Form.Label>
                   <Form.Select
@@ -200,7 +228,7 @@ function AddPatient() {
                     ))}
                   </Form.Select>
                 </Form.Group>
-              </div>
+              </div> */}
               {/* <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formInsuranceDetails">
                   <Form.Label>Insurance Details</Form.Label>
