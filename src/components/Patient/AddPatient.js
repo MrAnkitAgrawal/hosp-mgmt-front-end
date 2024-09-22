@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-// import DatePicker from "react-datepicker";
 import Navbar from "../Layouts/Navbar";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
@@ -208,52 +207,6 @@ function AddPatient() {
                   />
                 </Form.Group>
               </div>
-
-              {/* <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formInsuranceDetails">
-                  <Form.Label>Insurance Details</Form.Label>
-                  <Form.Select
-                    aria-label="Select Insurance Details"
-                    onChange={handleInsuranceChange}
-                    defaultValue=""
-                  >
-                    <option value="">Select Insurance</option>
-                    {insuranceOptions.map((option) => (
-                      <option
-                        key={option.policyNumber}
-                        value={option.policyNumber}
-                      >
-                        {option.insuranceCompany} - {option.policyNumber}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </div> */}
-              {/* <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formInsuranceDetails">
-                  <Form.Label>Insurance Details</Form.Label>
-                  <Controller
-                    name="insuranceDetails"
-                    control={control}
-                    render={({ field }) => (
-                      <Form.Select
-                        aria-label="Select Insurance Details"
-                        {...field}
-                      >
-                        <option value="">Select Insurance</option>
-                        {insuranceOptions.map((option) => (
-                          <option
-                            key={option.policyNumber}
-                            value={JSON.stringify(option)}
-                          >
-                            {option.company} - {option.policyNumber}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    )}
-                  />
-                </Form.Group>
-              </div> */}
             </div>
 
             <div className="mt-4">

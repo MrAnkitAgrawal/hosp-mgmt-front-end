@@ -64,15 +64,10 @@ const EditPatient = () => {
     if (dateString instanceof Date) {
       return dateString;
     }
-
-    // If dateString is not a valid string, return null
     if (!dateString || typeof dateString !== "string") {
       return null;
     }
-
     const [day, month, year] = dateString.split("-").map(Number);
-
-    // Return a Date object
     return new Date(year, month - 1, day);
   };
   const formatDate = (date) => {
@@ -82,8 +77,8 @@ const EditPatient = () => {
     return `${day}-${month}-${year}`;
   };
   const handleDateofBirth = (e) => {
-    const formattedDate = formatDate(e); // Format date to dd-MM-yyyy
-    setValue("dateOfBirth", formattedDate); // Use react-hook-form's setValue to update the form state
+    const formattedDate = formatDate(e);
+    setValue("dateOfBirth", formattedDate);
   };
 
   const isDateInDDMMYYYY = (dateString) => {
