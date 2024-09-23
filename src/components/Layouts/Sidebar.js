@@ -66,9 +66,6 @@ function Sidebar() {
                 <Link to={"/dialysis"}>Dialysis</Link>
               </li>
               <li className="nav-item">
-                <Link to={"/add-patient"}>Add Patient</Link>
-              </li>
-              <li className="nav-item">
                 <Link to={"/book-dialysis"}>Book Dialysis</Link>
               </li>
               <li className="nav-item">

@@ -53,26 +53,21 @@ const EditPatient = () => {
         whatsAppNumber: patientData.whatsAppNumber || "",
         mobileNumber: patientData.mobileNumber || "",
         emailId: patientData.emailId || "",
-        insuranceDetails: patientData.insuranceDetails || [],
+        insuranceCompany:
+          patientData.insuranceDetails[0].insuranceCompany || "",
+        policyNumber: patientData.insuranceDetails[0].policyNumber || "",
       });
     }
   }, [patientData, reset]);
 
   const parseDate = (dateString) => {
-    // Check if the input is already a Date object
     if (dateString instanceof Date) {
       return dateString;
     }
-
-    // If dateString is not a valid string, return null
     if (!dateString || typeof dateString !== "string") {
       return null;
     }
-
-    // Parse the string "dd-MM-yyyy" to a Date object
     const [day, month, year] = dateString.split("-").map(Number);
-
-    // Return a Date object
     return new Date(year, month - 1, day);
   };
   const formatDate = (date) => {
@@ -82,24 +77,31 @@ const EditPatient = () => {
     return `${day}-${month}-${year}`;
   };
   const handleDateofBirth = (e) => {
-    const formattedDate = formatDate(e); // Format date to dd-MM-yyyy
-    setValue("dateOfBirth", formattedDate); // Use react-hook-form's setValue to update the form state
-  };
-  const handleInsuranceChange = (event) => {
-    const selectedPolicyNumber = event.target.value;
-    const selectedInsurance = insuranceOptions.find(
-      (option) => option.policyNumber === selectedPolicyNumber
-    );
-    setValue("insuranceDetails", selectedInsurance ? [selectedInsurance] : []);
+    const formattedDate = formatDate(e);
+    setValue("dateOfBirth", formattedDate);
   };
 
+  const isDateInDDMMYYYY = (dateString) => {
+    const regex = /^\d{2}-\d{2}-\d{4}$/;
+    return regex.test(dateString);
+  };
   const onSubmit = async (data) => {
     try {
+      debugger;
+      const insuranceDetail = {
+        insuranceCompany: data.insuranceCompany,
+        policyNumber: data.policyNumber,
+      };
+      const insurance = [{ ...insuranceDetail }];
+      const formattedDOB = isDateInDDMMYYYY(data.dateOfBirth)
+        ? data.dateOfBirth
+        : formatDate(data.dateOfBirth);
       const formattedData = {
         ...data,
-        // dateOfBirth: formatDate(data.dateOfBirth),
+        dateOfBirth: formattedDOB,
         mobileNumber: data.mobileNumber,
         patientId: patientData.patientId,
+        insuranceDetails: insurance,
       };
       console.log("Updated Patient Data:", formattedData);
 
@@ -160,7 +162,7 @@ const EditPatient = () => {
             </div>
 
             <div className="row">
-              <div className="col-12 col-md-4 mb-3">
+              <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formDOB">
                   <Form.Label>Select Date</Form.Label>
                   <Controller
@@ -181,17 +183,11 @@ const EditPatient = () => {
                           return todayDate < date;
                         }}
                       />
-                      // <DatePicker
-                      //   onChange={(date) => field.onChange(date)}
-                      //   selected={field.value}
-                      //   dateFormat="MMMM d, yyyy"
-                      //   className="form-control"
-                      // />
                     )}
                   />
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-4 mb-3">
+              <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formGender">
                   <Form.Label>Gender</Form.Label>
                   <Form.Select
@@ -206,13 +202,23 @@ const EditPatient = () => {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-4 mb-3">
+              <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formAadharNumber">
                   <Form.Label>Aadhar Number</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter Aadhar Number"
                     {...register("aadharNumber")}
+                  />
+                </Form.Group>
+              </div>
+              <div className="col-12 col-md-6 col-lg-3 mb-3">
+                <Form.Group controlId="formInsuranceCompany">
+                  <Form.Label>Insurance Company</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Insurance Details"
+                    {...register("insuranceCompany")}
                   />
                 </Form.Group>
               </div>
@@ -251,24 +257,12 @@ const EditPatient = () => {
               </div>
               <div className="col-12 col-md-6 col-lg-3 mb-3">
                 <Form.Group controlId="formInsuranceDetails">
-                  <Form.Label>Insurance Details</Form.Label>
-                  <Form.Select
-                    aria-label="Select Insurance Details"
-                    onChange={handleInsuranceChange}
-                    defaultValue={
-                      patientData?.insuranceDetails?.[0]?.policyNumber || ""
-                    }
-                  >
-                    <option value="">Select Insurance</option>
-                    {insuranceOptions.map((option) => (
-                      <option
-                        key={option.policyNumber}
-                        value={option.policyNumber}
-                      >
-                        {option.insuranceCompany} - {option.policyNumber}
-                      </option>
-                    ))}
-                  </Form.Select>
+                  <Form.Label>Policy Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Policy Number"
+                    {...register("policyNumber")}
+                  />
                 </Form.Group>
               </div>
             </div>
