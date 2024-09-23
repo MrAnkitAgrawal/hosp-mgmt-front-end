@@ -89,7 +89,8 @@ const BookDialysis = () => {
           <Form onSubmit={handleSubmit(onSubmit)}>
             <div className="row">
               <div className="col-12 col-md-4 mb-3">
-                <Form.Group controlId="patientId">
+                <Form.Group controlId="patientId" className="formGroupDiv">
+                  <Form.Label>Patient Name</Form.Label>
                   <Form.Select
                     aria-label="Select Patient"
                     onChange={handlePatientsChange}
@@ -105,7 +106,7 @@ const BookDialysis = () => {
                 </Form.Group>
               </div>
               <div className="col-12 col-md-4 mb-3">
-                <Form.Group controlId="dialysisDate">
+                <Form.Group controlId="dialysisDate" className="formGroupDiv">
                   <Form.Label>Dialysis Date</Form.Label>
                   <DatePicker
                     format="dd-MM-yyyy"
@@ -119,9 +120,9 @@ const BookDialysis = () => {
                 </Form.Group>
               </div>
               <div className="col-12 col-md-4 mb-3">
-                <Form.Group controlId="dialysisStationLabel">
+                <Form.Group controlId="dialysisStationLabel" className="formGroupDiv">
                   <Form.Label>Dialysis Station</Form.Label>
-                  <div>
+                  <div style={{display: "flex", flexWrap: "wrap"}}>
                     <div className="d-inline-block me-3">
                       <Form.Check
                         type="radio"
@@ -130,6 +131,7 @@ const BookDialysis = () => {
                         value="DS_ONE"
                         checked={selectedStation === "DS_ONE"}
                         onChange={handleStationChange}
+                        className="formCheckboxClass"
                       />
                     </div>
                     <div className="d-inline-block me-3">
@@ -140,6 +142,7 @@ const BookDialysis = () => {
                         value="DS_TWO"
                         checked={selectedStation === "DS_TWO"}
                         onChange={handleStationChange}
+                        className="formCheckboxClass"
                       />
                     </div>
                     <div className="d-inline-block me-3">
@@ -150,6 +153,7 @@ const BookDialysis = () => {
                         value="DS_THREE"
                         checked={selectedStation === "DS_THREE"}
                         onChange={handleStationChange}
+                        className="formCheckboxClass"
                       />
                     </div>
                     <div className="d-inline-block me-3">
@@ -160,6 +164,7 @@ const BookDialysis = () => {
                         value="DS_FOUR"
                         checked={selectedStation === "DS_FOUR"}
                         onChange={handleStationChange}
+                        className="formCheckboxClass"
                       />
                     </div>
                     <div className="d-inline-block me-3">
@@ -170,6 +175,7 @@ const BookDialysis = () => {
                         value="DS_FIVE"
                         checked={selectedStation === "DS_FIVE"}
                         onChange={handleStationChange}
+                        className="formCheckboxClass"
                       />
                     </div>
                     <div className="d-inline-block me-3">
@@ -180,6 +186,7 @@ const BookDialysis = () => {
                         value="DS_SIX"
                         checked={selectedStation === "DS_SIX"}
                         onChange={handleStationChange}
+                        className="formCheckboxClass"
                       />
                     </div>
                   </div>
@@ -189,10 +196,10 @@ const BookDialysis = () => {
 
             <div className="row">
               <div className="col-12 col-md-4 mb-3">
-                <Form.Group controlId="dialysisSlot">
+                <Form.Group controlId="dialysisSlot" className="formGroupDiv">
                   <Form.Label>Dialysis Slot</Form.Label>
 
-                  <div>
+                  <div style={{display: "flex", flexWrap: "wrap"}}>
                     <div className="d-inline-block me-3">
                       <Form.Check
                         type="radio"
@@ -201,6 +208,7 @@ const BookDialysis = () => {
                         value="MORNING"
                         checked={selectedDialysisSlot === "MORNING"}
                         onChange={handleDialysisSlot}
+                        className="formCheckboxClass"
                       />
                     </div>
                     <div className="d-inline-block me-3">
@@ -211,6 +219,7 @@ const BookDialysis = () => {
                         value="AFTER_NOON"
                         checked={selectedDialysisSlot === "AFTER_NOON"}
                         onChange={handleDialysisSlot}
+                        className="formCheckboxClass"
                       />
                     </div>
                     <div className="d-inline-block me-3">
@@ -221,6 +230,7 @@ const BookDialysis = () => {
                         value="EVENING"
                         checked={selectedDialysisSlot === "EVENING"}
                         onChange={handleDialysisSlot}
+                        className="formCheckboxClass"
                       />
                     </div>
                     <div className="d-inline-block me-3">
@@ -231,13 +241,14 @@ const BookDialysis = () => {
                         value="NIGHT"
                         checked={selectedDialysisSlot === "NIGHT"}
                         onChange={handleDialysisSlot}
+                        className="formCheckboxClass"
                       />
                     </div>
                   </div>
                 </Form.Group>
               </div>
               <div className="col-12 col-md-4 mb-3">
-                <Form.Group controlId="scheduleRandomlyIfMentionedStationAndSlotNotAvailable">
+                <Form.Group controlId="scheduleRandomlyIfMentionedStationAndSlotNotAvailable" style={{display: "flex", flexWrap: "wrap", flexDirection: "column", alignContent: "flex-start"}}>
                   <Form.Label>Schedule Randomly</Form.Label>
                   <Toggle value={scheduleRandom} onChange={handleSchedule} />
                 </Form.Group>

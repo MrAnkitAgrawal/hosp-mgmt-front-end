@@ -28,6 +28,18 @@
   color: #61dafb;
 }
 
+.formGroupDiv label {
+  display: flex;
+}
+
+.rs-picker-toggle-wrapper {
+  display: block !important;
+}
+
+.formCheckboxClass {
+  padding: 4px !important;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
