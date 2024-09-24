@@ -13,6 +13,7 @@ import { Toggle } from "rsuite";
 const DialysisDetails = () => {
   const [BillingCheck, setBillingCheck] = useState(false);
   const [amount, setAmount] = useState("");
+  const [billItems, setBillItems] = useState();
   const [itemQuantity, SetitemQuantity] = useState("");
   const [open, setOpen] = useState(false);
   const [size, setSize] = useState();
@@ -150,18 +151,28 @@ const DialysisDetails = () => {
     console.log(data);
   };
 
-  const getDialysisBillingDetails = async (id) => {
+  const getDialysisBillingDetails = async (id, action) => {
     try {
       debugger;
+
       const result = await axios.get(`dialysisScheduler/${id}/billing`);
-      if (result.status === 200 && result.data) {
-        const billingDetails = result.data;
-        setValue("billingHead", billingDetails.billingHead);
-        setValue("billItemName", billingDetails.billItems[0].billItemName);
-        setValue("billItemType", billingDetails.billItems[0].billItemType);
-        setValue("billingRemarks", billingDetails.billingRemarks);
-        SetitemQuantity(billingDetails.billItems[0].amount);
-        setAmount(billingDetails.billItems[0].itemQuantity);
+      if (action === "view") {
+        if (result.status === 200 && result.data) {
+          const billingDetails = result.data;
+          setValue("billingHead", billingDetails.billingHead);
+          setValue("billItemName", billingDetails.billItems[0].billItemName);
+          setValue("billItemType", billingDetails.billItems[0].billItemType);
+          setValue("billingRemarks", billingDetails.billingRemarks);
+          SetitemQuantity(billingDetails.billItems[0].amount);
+          setAmount(billingDetails.billItems[0].itemQuantity);
+        }
+      } else {
+        handleOpen("md", "add");
+        if (result.data.billItems.length > 0 || result.data.billItems === []) {
+          setBillItems(true);
+        } else {
+          setBillItems(false);
+        }
       }
 
       console.log(result);
@@ -359,7 +370,8 @@ const DialysisDetails = () => {
                                     onClick={() => {
                                       handleOpen("md", "view");
                                       getDialysisBillingDetails(
-                                        item.scheduleID
+                                        item.scheduleID,
+                                        "view"
                                       );
                                     }}
                                   >
@@ -368,7 +380,10 @@ const DialysisDetails = () => {
                                   <Button
                                     size="md"
                                     onClick={() => {
-                                      handleOpen("md", "add");
+                                      getDialysisBillingDetails(
+                                        item.scheduleID,
+                                        "add"
+                                      );
                                       localStorage.setItem(
                                         "scheduleID",
                                         item.scheduleID
@@ -497,16 +512,19 @@ const DialysisDetails = () => {
             {type === "add" && (
               <div>
                 <div className="col">
-                  <div className="mb-3">
-                    <Form.Group controlId="formFirstName">
-                      <Form.Label>Billing Head</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter Billing Head"
-                        {...register("billingHead")}
-                      />
-                    </Form.Group>
-                  </div>
+                  {billItems === false && (
+                    <div className="mb-3">
+                      <Form.Group controlId="formFirstName">
+                        <Form.Label>Billing Head</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter Billing Head"
+                          {...register("billingHead")}
+                        />
+                      </Form.Group>
+                    </div>
+                  )}
+
                   <div className="mb-3">
                     <Form.Group controlId="formBillItemName">
                       <Form.Label> Bill Item Name</Form.Label>
@@ -555,16 +573,18 @@ const DialysisDetails = () => {
                       />
                     </Form.Group>
                   </div>
-                  <div className="mb-3">
-                    <Form.Group controlId="formBillingRemarks">
-                      <Form.Label>Billing Remarks</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter Billings Remarks"
-                        {...register("billingRemarks")}
-                      />
-                    </Form.Group>
-                  </div>
+                  {billItems === false && (
+                    <div className="mb-3">
+                      <Form.Group controlId="formBillingRemarks">
+                        <Form.Label>Billing Remarks</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter Billings Remarks"
+                          {...register("billingRemarks")}
+                        />
+                      </Form.Group>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
