@@ -116,7 +116,6 @@ const DialysisDetails = () => {
   const getDialsisDetail = async (fromDate, ToDate) => {
     const formattedFromDate = formatDate(fromDate);
     const formattedToDate = formatDate(ToDate);
-    debugger;
     try {
       const result = await axios.get(
         `dialysisScheduler?dateFrom=${formattedFromDate}&dateTo=${formattedToDate}`
@@ -131,7 +130,6 @@ const DialysisDetails = () => {
   };
   const dialysisBilling = async () => {
     try {
-      debugger;
       const billingHead = getValues("billingHead");
       const billingRemarks = getValues("billingRemarks");
       const billItemType = getValues("billItemType");
@@ -155,7 +153,6 @@ const DialysisDetails = () => {
         ],
       };
       console.log(billingData);
-      debugger;
       const result = await axios.post(
         `dialysisScheduler/${scheduleID}/billing`,
         billingData
@@ -300,7 +297,6 @@ const DialysisDetails = () => {
     }
   };
   const handleSearch = () => {
-    debugger;
     if (fromDate > toDate) {
       toast.error("To Date cannot be lesser than from Date");
       return;
@@ -350,11 +346,11 @@ const DialysisDetails = () => {
           <div className="col-md-12">
             <div className="card">
               <div className="card-header">
-                <div className="d-flex align-items-center">
+                <div>
                   <h4 className="card-title">Dialysis Details</h4>
                   <div className="row">
                     <div className="col-12 col-md-4 mb-3">
-                      <Form.Group controlId="formFirstName">
+                      <Form.Group controlId="formFirstName" className="formGroupDiv">
                         <Form.Label>From Date</Form.Label>
                         <DatePicker
                           format="dd-MM-yyyy"
@@ -364,7 +360,7 @@ const DialysisDetails = () => {
                       </Form.Group>
                     </div>
                     <div className="col-12 col-md-4 mb-3">
-                      <Form.Group controlId="formMiddleName">
+                      <Form.Group controlId="formMiddleName" className="formGroupDiv">
                         <Form.Label>To Date</Form.Label>
                         <DatePicker
                           format="dd-MM-yyyy"
@@ -373,10 +369,13 @@ const DialysisDetails = () => {
                         />
                       </Form.Group>
                     </div>
-                    <div className="">
-                      <Button variant="primary" onClick={handleSearch}>
-                        Search
-                      </Button>
+                    <div className="col-12 col-md-4 mb-3">
+                      <Form.Group controlId="formMiddleName" className="formGroupDiv">
+                        <Form.Label>&nbsp;</Form.Label>
+                        <Button className="btn btn-primary" type="submit" onClick={handleSearch}>
+                          Search
+                        </Button>
+                      </Form.Group>
                     </div>
                   </div>
                 </div>

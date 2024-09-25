@@ -75,9 +75,12 @@ function AddPatient() {
         <div className="page-inner">
           <h3 className="fw-bold mb-3">ADD Patient</h3>
           <Form onSubmit={handleSubmit(onSubmit)}>
+            <div style={{textAlign: "left", textDecoration: "underline", marginBottom: "10px"}}>
+              <h4>Patient Details</h4>
+            </div>
             <div className="row">
               <div className="col-12 col-md-4 mb-3">
-                <Form.Group controlId="formFirstName">
+                <Form.Group controlId="formFirstName" className="formGroupDiv">
                   <Form.Label>First Name</Form.Label>
                   <Form.Control
                     type="text"
@@ -87,7 +90,7 @@ function AddPatient() {
                 </Form.Group>
               </div>
               <div className="col-12 col-md-4 mb-3">
-                <Form.Group controlId="formMiddleName">
+                <Form.Group controlId="formMiddleName" className="formGroupDiv">
                   <Form.Label>Middle Name</Form.Label>
                   <Form.Control
                     type="text"
@@ -97,7 +100,7 @@ function AddPatient() {
                 </Form.Group>
               </div>
               <div className="col-12 col-md-4 mb-3">
-                <Form.Group controlId="formLastName">
+                <Form.Group controlId="formLastName" className="formGroupDiv">
                   <Form.Label>Last Name</Form.Label>
                   <Form.Control
                     type="text"
@@ -109,8 +112,8 @@ function AddPatient() {
             </div>
 
             <div className="row">
-              <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formDOB">
+              <div className="col-12 col-md-4 mb-3">
+                <Form.Group controlId="formDOB" className="formGroupDiv">
                   <Form.Label>Select Date</Form.Label>
                   <Controller
                     name="dateOfBirth"
@@ -121,7 +124,6 @@ function AddPatient() {
                         onChange={handleDateofBirth}
                         shouldDisableDate={(date) => {
                           const todayDate = new Date();
-
                           return todayDate < date;
                         }}
                       />
@@ -129,8 +131,8 @@ function AddPatient() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formGender">
+              <div className="col-12 col-md-4 mb-3">
+                <Form.Group controlId="formGender" className="formGroupDiv">
                   <Form.Label>Gender</Form.Label>
                   <Form.Select
                     aria-label="Select Gender"
@@ -143,8 +145,8 @@ function AddPatient() {
                   </Form.Select>
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formAadharNumber">
+              <div className="col-12 col-md-4 mb-3">
+                <Form.Group controlId="formAadharNumber" className="formGroupDiv">
                   <Form.Label>Aadhar Number</Form.Label>
                   <Form.Control
                     type="text"
@@ -153,21 +155,11 @@ function AddPatient() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formInsuranceCompany">
-                  <Form.Label>Insurance Company</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter Insurance Details"
-                    {...register("insuranceCompany")}
-                  />
-                </Form.Group>
-              </div>
             </div>
 
             <div className="row">
-              <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formWhatsAppNumber">
+              <div className="col-12 col-md-4 mb-3">
+                <Form.Group controlId="formWhatsAppNumber" className="formGroupDiv">
                   <Form.Label>WhatsApp Number</Form.Label>
                   <Form.Control
                     type="text"
@@ -176,8 +168,8 @@ function AddPatient() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formMobileNumber">
+              <div className="col-12 col-md-4 mb-3">
+                <Form.Group controlId="formMobileNumber" className="formGroupDiv">
                   <Form.Label>Mobile Number</Form.Label>
                   <Form.Control
                     type="text"
@@ -186,8 +178,8 @@ function AddPatient() {
                   />
                 </Form.Group>
               </div>
-              <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formEmailId">
+              <div className="col-12 col-md-4 mb-3">
+                <Form.Group controlId="formEmailId" className="formGroupDiv">
                   <Form.Label>Email Id</Form.Label>
                   <Form.Control
                     type="email"
@@ -196,9 +188,24 @@ function AddPatient() {
                   />
                 </Form.Group>
               </div>
+            </div>
+            <div style={{textAlign: "left", textDecoration: "underline", marginBottom: "10px"}}>
+              <h4>Insurance Details</h4>
+            </div>
+            <div className="row">
+              <div className="col-12 col-md-4 mb-3">
+                <Form.Group controlId="formInsuranceCompany" className="formGroupDiv">
+                  <Form.Label>Insurance Company</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Insurance Details"
+                    {...register("insuranceCompany")}
+                  />
+                </Form.Group>
+              </div>
 
-              <div className="col-12 col-md-6 col-lg-3 mb-3">
-                <Form.Group controlId="formInsuranceDetails">
+              <div className="col-12 col-md-4 mb-3">
+                <Form.Group controlId="formInsuranceDetails" className="formGroupDiv">
                   <Form.Label>Policy Number</Form.Label>
                   <Form.Control
                     type="text"

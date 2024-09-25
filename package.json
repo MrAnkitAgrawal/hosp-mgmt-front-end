@@ -25,7 +25,7 @@
     "rsuite": "^5.70.3",
     "web-vitals": "^2.1.4"
   },
-  "proxy": "http://localhost:8080/hosp-mgmt/v1/",
+  "proxy": "http://host.docker.internal:8080/hosp-mgmt/v1/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

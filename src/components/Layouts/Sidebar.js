@@ -1,5 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaRegUser } from "react-icons/fa";
+import { PiBed } from "react-icons/pi";
+
 function Sidebar() {
   return (
     <>
@@ -7,7 +10,7 @@ function Sidebar() {
         <div className="sidebar-logo">
           {/* <!-- Logo Header --> */}
           <div className="logo-header" data-background-color="dark">
-            <a href="index.html" className="logo">
+            <a href="#" className="logo">
               <img
                 src="assets/img/kaiadmin/logo_light.svg"
                 alt="navbar brand"
@@ -35,44 +38,50 @@ function Sidebar() {
               <li className="nav-item active">
                 <a
                   data-bs-toggle="collapse"
-                  href="#dashboard"
+                  href="#patients"
                   className="collapsed"
                   aria-expanded="false"
                 >
-                  <i className="fas fa-home"></i>
-                  <p>Dashboard</p>
+                  <FaRegUser style={{fontSize: "24px", marginRight: "10px"}} />
+                  <p>Patients</p>
                   <span className="caret"></span>
                 </a>
-                <div className="collapse" id="dashboard">
+                <div className="collapse" id="patients">
                   <ul className="nav nav-collapse">
                     <li>
-                      <a href="../demo1/index.html">
-                        <span className="sub-item">Dashboard 1</span>
-                      </a>
+                      <Link to={"/patient"}>All Patient</Link>
+                    </li>
+                    <li>
+                      <Link to={"/add-patient"}>Add Patient</Link>
                     </li>
                   </ul>
                 </div>
               </li>
-              <li className="nav-section">
-                <span className="sidebar-mini-icon">
-                  <i className="fa fa-ellipsis-h"></i>
-                </span>
-                <h4 className="text-section">Components</h4>
-              </li>
-              <li className="nav-item">
-                <Link to={"/patient"}>Patient</Link>
-              </li>
-              <li className="nav-item">
-                <Link to={"/dialysis"}>Dialysis</Link>
-              </li>
-              <li className="nav-item">
-                <Link to={"/book-dialysis"}>Book Dialysis</Link>
-              </li>
-              <li className="nav-item">
-                <Link to={"/dialysis-details"}>Dialyis Details</Link>
-              </li>
-              <li className="nav-item">
-                <Link to={"/dialysis-billing"}>Dialyis Billing</Link>
+              
+              <li className="nav-item active">
+                <a
+                  data-bs-toggle="collapse"
+                  href="#dialysis"
+                  className="collapsed"
+                  aria-expanded="false"
+                >
+                  <PiBed style={{fontSize: "24px", marginRight: "10px"}} />
+                  <p>Dislysis</p>
+                  <span className="caret"></span>
+                </a>
+                <div className="collapse" id="dialysis">
+                  <ul className="nav nav-collapse">
+                    <li>
+                      <Link to={"/dialysis-details"}>All Dialysis</Link>
+                    </li>
+                    <li>
+                      <Link to={"/book-dialysis"}>Book Dialysis</Link>
+                    </li>
+                    <li>
+                      <Link to={"/dialysis-billing"}>Dialysis Billing</Link>
+                    </li>
+                  </ul>
+                </div>
               </li>
             </ul>
           </div>
