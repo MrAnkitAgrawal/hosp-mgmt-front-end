@@ -6,25 +6,25 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { FaEdit } from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
+import { Modal, ButtonToolbar, Button, Placeholder } from "rsuite";
 import { toast } from "react-toastify";
 import useGetAPI from "../../hooks/useGetApi";
+import { MdOutlinePayment } from "react-icons/md";
 function Patient() {
+  const [open, setOpen] = useState(false);
+  const [size, setSize] = useState();
+  const [type, setType] = useState("");
   // const [patient, setPatient] = useState([]);
   const navigate = useNavigate();
   const { data: patient, error, refetch } = useGetAPI(`patient`);
 
   if (error) return <p>Error: {toast.error(error.message)}</p>;
-  // const getPatients = async () => {
-  //   try {
-  //     const result = await axios.get(`patient`);
-  //     console.log(result);
-  //     if (result.status === 200) {
-  //       setPatient(result.data);
-  //     }
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
+  const handleOpen = (value, modalType) => {
+    setType(modalType);
+    setSize(value);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
   const deletePatient = async (id) => {
     try {
       const result = await axios.delete(`patient/${id}`);
@@ -227,11 +227,23 @@ function Patient() {
                                     title=""
                                     className="btn btn-link btn-danger"
                                     data-original-title="Remove"
-                                    onClick={() => {
-                                      deletePatient(item.patientId);
-                                    }}
+                                    // onClick={() => {
+                                    //   deletePatient(item.patientId);
+                                    // }}
                                   >
                                     <FaTrashAlt />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title=""
+                                    className="btn btn-link btn-primary btn-lg"
+                                    data-original-title="Payment"
+                                    onClick={() => {
+                                      handleOpen("md", "payment");
+                                    }}
+                                  >
+                                    <MdOutlinePayment />
                                   </button>
                                 </div>
                               </td>
@@ -246,6 +258,19 @@ function Patient() {
           </div>
         </div>
       </div>
+      {type && (
+        <Modal size={size} open={open} onClose={handleClose}>
+          <Modal.Header>
+            <Modal.Title>
+              {type === "payment" && "Check Payment Detials"}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>{type === "payment" && <h1>Payment Body</h1>}</Modal.Body>
+          <Modal.Footer>
+            {type === "payment" && <Button appearance="primary">Close</Button>}
+          </Modal.Footer>
+        </Modal>
+      )}
     </>
   );
 }
