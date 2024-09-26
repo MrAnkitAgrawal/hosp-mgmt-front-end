@@ -2,19 +2,33 @@ import React, { useState, useEffect } from "react";
 import "../../index.css";
 import Navbar from "../Layouts/Navbar";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import axios from "axios";
+import { Form } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
 import { Modal, ButtonToolbar, Button, Placeholder } from "rsuite";
+import { useForm, Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import useGetAPI from "../../hooks/useGetApi";
 import { MdOutlinePayment } from "react-icons/md";
+import { GrView } from "react-icons/gr";
+import { MdOutlinePayments } from "react-icons/md";
 function Patient() {
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    reset,
+    watch,
+    getValues,
+    formState: { errors },
+  } = useForm({});
   const [open, setOpen] = useState(false);
+  const [billingDetails, setBillingDetails] = useState([]);
+  const [billItems, setBillItems] = useState([]);
   const [size, setSize] = useState();
   const [type, setType] = useState("");
-  // const [patient, setPatient] = useState([]);
   const navigate = useNavigate();
   const { data: patient, error, refetch } = useGetAPI(`patient`);
 
@@ -46,9 +60,57 @@ function Patient() {
       console.log(result);
     } catch (error) {}
   };
-  // useEffect(() => {
-  //   getPatients();
-  // }, []);
+  const getPaymentDetails = async (id) => {
+    try {
+      const result = await axios.get(`patient/${id}/billing`);
+      if (result.status === 200) {
+        setBillingDetails(result.data.billingDetails);
+      }
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleBillItem = (size, type, id) => {
+    handleOpen(size, type);
+    const bill = [];
+    billingDetails.filter((item) => {
+      if (item.billingId === id) {
+        item.billItems.forEach((element) => {
+          bill.push(element);
+        });
+      }
+    });
+    setBillItems(bill);
+  };
+  const completePayment = async () => {
+    try {
+      const patientID = parseInt(localStorage.getItem("patientID"));
+      const billingDetail = billingDetails.map((item) => {
+        return { billingId: item.billingId };
+      });
+      const paymentMode = getValues("paymentMode");
+      const amount = getValues("paidAmount");
+      const details = {
+        paymentId: null,
+        paymentType: getValues("paymentType"),
+        paidAmount: parseInt(amount),
+        paymentMode: paymentMode.toUpperCase(),
+        paymentRemarks: getValues("paymentRemarks"),
+        billingDetails: billingDetail,
+      };
+      const result = await axios.post(`patient/${patientID}/payment`, details);
+      console.log(result);
+      toast.success("payment succesfully");
+      console.log(details);
+    } catch (error) {
+      if (error.response.status === 400) {
+        toast.error("Bill not ready yet");
+      }
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -227,9 +289,6 @@ function Patient() {
                                     title=""
                                     className="btn btn-link btn-danger"
                                     data-original-title="Remove"
-                                    // onClick={() => {
-                                    //   deletePatient(item.patientId);
-                                    // }}
                                   >
                                     <FaTrashAlt />
                                   </button>
@@ -241,9 +300,27 @@ function Patient() {
                                     data-original-title="Payment"
                                     onClick={() => {
                                       handleOpen("md", "payment");
+                                      getPaymentDetails(item.patientId);
                                     }}
                                   >
                                     <MdOutlinePayment />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    data-bs-toggle="tooltip"
+                                    title=""
+                                    className="btn btn-link btn-primary btn-lg"
+                                    data-original-title="Payment"
+                                    onClick={() => {
+                                      getPaymentDetails(item.patientId);
+                                      localStorage.setItem(
+                                        "patientID",
+                                        item.patientId
+                                      );
+                                      handleOpen("md", "completePayment");
+                                    }}
+                                  >
+                                    <MdOutlinePayments />
                                   </button>
                                 </div>
                               </td>
@@ -263,11 +340,161 @@ function Patient() {
           <Modal.Header>
             <Modal.Title>
               {type === "payment" && "Check Payment Detials"}
+              {type === "completePayment" && "Complete Payment Detials"}
+              {type === "checkBill" && "Check Bill Items"}
             </Modal.Title>
           </Modal.Header>
-          <Modal.Body>{type === "payment" && <h1>Payment Body</h1>}</Modal.Body>
+          <Modal.Body>
+            {type === "payment" && (
+              <div>
+                <h4>Billing Details</h4>
+                <div className="table-responsive">
+                  <table
+                    id="add-row"
+                    className="display table table-striped table-hover"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Billing Id</th>
+                        <th>Billing Time stamp</th>
+                        <th>Billing Head</th>
+                        <th>Billing Remarks</th>
+                        <th>Bill Status</th>
+                        <th>Paid Amount</th>
+                        <th>Total Bill Amount</th>
+                        <th style={{ width: "10%" }}>Check Billing Item</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {billingDetails &&
+                        billingDetails.map((item) => {
+                          return (
+                            <tr key={item.itemId}>
+                              <td>{item.billingId}</td>
+                              <td>{item.billingTimestamp}</td>
+                              <td>{item.billingHead}</td>
+                              <td>{item.billingRemarks}</td>
+                              <td>{item.billStatus}</td>
+                              <td>{item.paidAmount}</td>
+                              <td>{item.totalBillAmount}</td>
+                              <td>
+                                <div className="form-button-action">
+                                  <Button
+                                    size="md"
+                                    onClick={() => {
+                                      handleBillItem(
+                                        "md",
+                                        "checkBill",
+                                        item.billingId
+                                      );
+                                    }}
+                                  >
+                                    <GrView style={{ color: "green" }} />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            {type === "completePayment" && (
+              <div>
+                <div className="col">
+                  <div className="mb-3">
+                    <Form.Group controlId="formPaymentType">
+                      <Form.Label> Payment Type</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Payment Type"
+                        {...register("paymentType")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formPaidAmount">
+                      <Form.Label>Paid Amount</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Amount"
+                        {...register("paidAmount")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formPaymentMode">
+                      <Form.Label>Payment Mode</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Payment Mode"
+                        {...register("paymentMode")}
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="mb-3">
+                    <Form.Group controlId="formPaymentRemarks">
+                      <Form.Label> Payment Rremarks</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Payment Remarks"
+                        {...register("paymentRemarks")}
+                      />
+                    </Form.Group>
+                  </div>
+                </div>
+              </div>
+            )}
+            {type === "checkBill" && (
+              <div>
+                <h1>Check Bill</h1>
+                <div className="table-responsive">
+                  <table
+                    id="add-row"
+                    className="display table table-striped table-hover"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Item Id</th>
+                        <th>Bill Item Type</th>
+                        <th>Bill Item Name</th>
+                        <th>Item Quanitity</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {billItems &&
+                        billItems.map((item) => {
+                          return (
+                            <tr key={item.itemId}>
+                              <td>{item.itemId}</td>
+                              <td>{item.billItemType}</td>
+                              <td>{item.billItemName}</td>
+                              <td>{item.itemQuantity}</td>
+                              <td>{item.amount}</td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </Modal.Body>
           <Modal.Footer>
             {type === "payment" && <Button appearance="primary">Close</Button>}
+            {type === "checkBill" && (
+              <Button appearance="primary">Close</Button>
+            )}
+            {type === "completePayment" && (
+              <Button appearance="primary" onClick={completePayment}>
+                Complete
+              </Button>
+            )}
           </Modal.Footer>
         </Modal>
       )}

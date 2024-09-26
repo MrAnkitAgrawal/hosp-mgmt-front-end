@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa";
 import { PiBed } from "react-icons/pi";
-
+import logo from "../../assets/img/logo_light.svg";
 function Sidebar() {
   return (
     <>
@@ -12,7 +12,7 @@ function Sidebar() {
           <div className="logo-header" data-background-color="dark">
             <a href="#" className="logo">
               <img
-                src="assets/img/kaiadmin/logo_light.svg"
+                src={logo}
                 alt="navbar brand"
                 className="navbar-brand"
                 height="20"
@@ -42,7 +42,9 @@ function Sidebar() {
                   className="collapsed"
                   aria-expanded="false"
                 >
-                  <FaRegUser style={{fontSize: "24px", marginRight: "10px"}} />
+                  <FaRegUser
+                    style={{ fontSize: "24px", marginRight: "10px" }}
+                  />
                   <p>Patients</p>
                   <span className="caret"></span>
                 </a>
@@ -57,7 +59,7 @@ function Sidebar() {
                   </ul>
                 </div>
               </li>
-              
+
               <li className="nav-item active">
                 <a
                   data-bs-toggle="collapse"
@@ -65,7 +67,7 @@ function Sidebar() {
                   className="collapsed"
                   aria-expanded="false"
                 >
-                  <PiBed style={{fontSize: "24px", marginRight: "10px"}} />
+                  <PiBed style={{ fontSize: "24px", marginRight: "10px" }} />
                   <p>Dislysis</p>
                   <span className="caret"></span>
                 </a>
@@ -76,9 +78,6 @@ function Sidebar() {
                     </li>
                     <li>
                       <Link to={"/book-dialysis"}>Book Dialysis</Link>
-                    </li>
-                    <li>
-                      <Link to={"/dialysis-billing"}>Dialysis Billing</Link>
                     </li>
                   </ul>
                 </div>
