@@ -275,7 +275,7 @@ function Patient() {
                                     type="button"
                                     data-bs-toggle="tooltip"
                                     title=""
-                                    className="btn btn-link btn-primary btn-lg"
+                                    className="btn-link btn-primary"
                                     data-original-title="Edit Task"
                                     onClick={() => {
                                       getPatientDetails(item.patientId);
@@ -287,7 +287,7 @@ function Patient() {
                                     type="button"
                                     data-bs-toggle="tooltip"
                                     title=""
-                                    className="btn btn-link btn-danger"
+                                    className="btn-link btn-danger"
                                     data-original-title="Remove"
                                   >
                                     <FaTrashAlt />
@@ -296,7 +296,7 @@ function Patient() {
                                     type="button"
                                     data-bs-toggle="tooltip"
                                     title=""
-                                    className="btn btn-link btn-primary btn-lg"
+                                    className="btn-link btn-primary"
                                     data-original-title="Payment"
                                     onClick={() => {
                                       handleOpen("md", "payment");
@@ -309,7 +309,7 @@ function Patient() {
                                     type="button"
                                     data-bs-toggle="tooltip"
                                     title=""
-                                    className="btn btn-link btn-primary btn-lg"
+                                    className="btn-link btn-primary"
                                     data-original-title="Payment"
                                     onClick={() => {
                                       getPaymentDetails(item.patientId);

@@ -5259,7 +5259,10 @@ label.error {
 .table > tfoot > tr > td {
   vertical-align: middle;
 }
-.table > tbody > tr > td,
+.table > tbody > tr > td {
+  padding: 6px 14px !important;
+}
+
 .table > tbody > tr > th {
   padding: 16px 24px !important;
 }
@@ -5271,7 +5274,7 @@ label.error {
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 12px 24px !important;
+  padding: 12px !important;
   border-bottom-width: 1px;
   font-weight: 600;
 }

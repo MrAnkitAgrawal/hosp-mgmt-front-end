@@ -152,7 +152,6 @@ const DialysisDetails = () => {
           },
         ],
       };
-      console.log(billingData);
       const result = await axios.post(
         `dialysisScheduler/${scheduleID}/billing`,
         billingData
@@ -172,7 +171,6 @@ const DialysisDetails = () => {
         SetitemQuantity("");
         setAmount("");
       }
-      console.log(result);
     } catch (error) {
       console.log(error.message);
     }
@@ -180,8 +178,6 @@ const DialysisDetails = () => {
   const updateStatus = async () => {
     const nextDialysis = getValues("nextDialysisDetails");
     const scheduleID = parseInt(localStorage.getItem("schedulecompleteID"));
-    console.log(scheduleID);
-    debugger;
     const status = getValues("dialysisStatus");
     if (nextDialysis) {
       const patientId = parseInt(localStorage.getItem("patientID"));
@@ -202,7 +198,7 @@ const DialysisDetails = () => {
           ),
         },
       };
-      debugger;
+
       const result = await axios.put(
         `dialysisScheduler/${scheduleID}/status`,
         data
@@ -213,8 +209,6 @@ const DialysisDetails = () => {
         handleClose();
         setCompletedSchedule(true);
       }
-      debugger;
-      console.log(result);
     } else {
       const data = {
         dialysisStatus: status.toUpperCase(),
@@ -225,7 +219,7 @@ const DialysisDetails = () => {
         ),
         nextDialysisDetails: null,
       };
-      debugger;
+
 
       const result = await axios.put(
         `dialysisScheduler/${scheduleID}/status`,
@@ -237,14 +231,13 @@ const DialysisDetails = () => {
         setCompletedSchedule(true);
         handleClose();
       }
-      console.log(result);
     }
   };
 
   const getDailysisView = async (id, action) => {
     try {
       const result = await axios.get(`dialysisScheduler/${id}/billing`);
-      debugger;
+
       if (result.status === 200 && result.data) {
         setBillingDetailsView(result.data);
         setBillingHead(result.data.billingHead);
@@ -252,7 +245,7 @@ const DialysisDetails = () => {
         handleOpen("md", action);
       }
     } catch (error) {
-      debugger;
+
       if (error.response.status === 400) {
         toast.info("No bill items added yet");
         // handleOpen("md",action);
@@ -266,7 +259,7 @@ const DialysisDetails = () => {
   const getDialysisBillingDetails = async (id, action) => {
     try {
       if (action === "view") {
-        debugger;
+  
         const result = await axios.get(`dialysisScheduler/${id}/billing`);
         if (result.status === 200 && result.data) {
           setBillingDetailsView(result.data);
@@ -275,13 +268,12 @@ const DialysisDetails = () => {
           handleOpen("md", "view");
         }
       } else {
-        debugger;
+  
         const result = await axios.get(`dialysisScheduler/${id}/billing`);
-        debugger;
+  
         setValue("billingHead", result.data.billingHead);
         setValue("billingRemarks", result.data.billingRemarks);
         setValue("billItems", result.data.billItems);
-        console.log(result);
         handleOpen("md", "add");
         setBillItems(true);
       }
@@ -306,7 +298,7 @@ const DialysisDetails = () => {
   };
   const cancelSchedule = async () => {
     try {
-      debugger;
+
       const cancelId = parseInt(localStorage.getItem("cancelId"));
       const result = await axios.put(`dialysisScheduler/${cancelId}/status`, {
         dialysisStatus: "CANCELLED",
@@ -560,7 +552,7 @@ const DialysisDetails = () => {
                         })
                       ) : (
                         <tr>
-                          <td colSpan="7">No Data Found</td>
+                          <td colSpan="8">No Data Found</td>
                         </tr>
                       )}
                     </tbody>
@@ -575,8 +567,13 @@ const DialysisDetails = () => {
         <Modal size={size} open={open} onClose={handleClose}>
           <Modal.Header>
             <Modal.Title>
-              {type === "view" && `${billingHead}, ${billingRemarks}`}
-              {type === "add" && "Add Dialysis Billings"}
+              {type === "view" && `Billing Head : ${billingHead}`}
+            </Modal.Title>
+            <Modal.Title style={{marginTop: "10px"}}>
+              {type === "view" && `Billing Remark : ${billingRemarks}`}
+            </Modal.Title>
+            <Modal.Title>
+            {type === "add" && "Add Dialysis Billings"}
               {type === "delete" && "Complete Dialysis"}
               {type === "alert" && "Cancel Schedule"}
             </Modal.Title>
@@ -608,7 +605,7 @@ const DialysisDetails = () => {
                               <td>{item.itemId}</td>
                               <td>{item.billItemType}</td>
                               <td>{item.billItemName}</td>
-                              <td>{item.itemQuantity}</td>
+                              <td>{item.itemQuantity === null ? "1" : item.itemQuantity}</td>
                               <td>{item.amount}</td>
                             </tr>
                           );
@@ -638,6 +635,20 @@ const DialysisDetails = () => {
                       </Form.Group>
                     </div>
                   )}
+                  <div className="mb-3">
+                    <Form.Group controlId="formBillItemType">
+                      <Form.Label>Item Type</Form.Label>
+                      <Form.Select
+                        aria-label="Select Bill Item Type"
+                        {...register("billItemType")}
+                      >
+                        <option value="">Select Bill Item Type</option>
+                        <option value="DIALYSIS">Dialysis</option>
+                        <option value="PATHOLOGY">Pathology</option>
+                        <option value="PHARMACY">Pharmacy</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </div>
 
                   <div className="mb-3">
                     <Form.Group controlId="formBillItemName">
@@ -660,18 +671,6 @@ const DialysisDetails = () => {
                         placeholder="Enter Item Quantity"
                         // {...register("middleName")}
                       />
-                    </Form.Group>
-                  </div>
-                  <div className="mb-3">
-                    <Form.Group controlId="formBillItemType">
-                      <Form.Select
-                        aria-label="Select Bill Item Type"
-                        {...register("billItemType")}
-                      >
-                        <option value="">Select Bill Item Type</option>
-                        <option value="DIALYSIS">Dialysis</option>
-                        <option value="PATHOLOGY">Pathology</option>
-                      </Form.Select>
                     </Form.Group>
                   </div>
                   <div className="mb-3">

@@ -113,7 +113,6 @@ const BookDialysis = () => {
                     onChange={handleDialysisDate}
                     shouldDisableDate={(date) => {
                       const todayDate = new Date();
-
                       return todayDate > date;
                     }}
                   />
